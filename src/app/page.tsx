@@ -1,91 +1,47 @@
-import Image from 'next/image'
-import { Inter } from 'next/font/google'
-import styles from './page.module.css'
+import Header from "@/components/header/Header";
+import BooksTable from "../sections/booksTable/BooksTable";
+import HeroRightSection from "@/components/heroRightSection/HeroRightSection";
+import Footer from "@/components/footer/Footer";
+import { Montserrat } from "next/font/google";
+export const montserrat = Montserrat({ subsets: ["latin"] });
+export type BookType = {
+  id: number;
+  name: string;
+  type: string;
+  available: boolean;
+};
+async function getData() {
+  const res = await fetch("https://simple-books-api.glitch.me/books");
+  if (!res.ok) {
+    throw new Error("Failed to fetch data");
+  }
 
-const inter = Inter({ subsets: ['latin'] })
-
-export default function Home() {
+  return res.json();
+}
+export default async function Home() {
+  const books: BookType[] = await getData();
   return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>src/app/page.tsx</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
+    <main
+      className={" min-h-screen overflow-x-hidden"}
+      style={{ fontFamily: montserrat.style.fontFamily }}
+    >
+      <Header />
+
+      <div className="flex flex-col lg:flex-row justify-center lg:justify-between items-center p-5 h-[55vh] bg-gradient-to-r from-[#0f0c29] via-[#302b63] to-[#24243e]">
+        <h1 className="mx-5 text-3xl font-thin tracking-wider text-white mt-5 w-screen lg:w-[50vw] text-center">
+          Order Books: Unleash Your Imagination, One Page at a Time!
+        </h1>
+        <div className="w-[50vw] flex justify-center items-center">
+          <HeroRightSection />
         </div>
       </div>
-
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-        <div className={styles.thirteen}>
-          <Image src="/thirteen.svg" alt="13" width={40} height={31} priority />
-        </div>
+      <h3 className="text-2xl font-thin text-[#302b63] text-center my-5 mx-5">
+        Books you need to Enhance your knowledge!
+      </h3>
+      <div className="flex justify-center mb-5">
+        <BooksTable books={books} />
       </div>
-
-      <div className={styles.grid}>
-        <a
-          href="https://beta.nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={inter.className}>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p className={inter.className}>
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={inter.className}>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p className={inter.className}>Explore the Next.js 13 playground.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={inter.className}>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p className={inter.className}>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
+      <Footer />
     </main>
-  )
+  );
 }
