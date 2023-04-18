@@ -1,34 +1,19 @@
 import { type NextRequest, NextResponse } from "next/server";
-// import { verifyAuth } from "./lib/auth";
+import { verifyAuth } from "./lib/auth";
 
 const middleware = async (req: NextRequest) => {
-  console.log("Middleware testing");
-
-  // const token = req.cookies.get("authToken")?.value;
-
-  // const verifiedToken =
-  //   token && (await verifyAuth(token).catch((err) => console.log(err)));
-
-  // if (req.nextUrl.pathname.startsWith("/auth/login") && !verifiedToken) {
-  //   return NextResponse.next();
-  // }
-  // if (
-  //   req.url.includes("/auth/login") ||
-  //   (req.url.includes("/auth/signup") && verifiedToken)
-  // ) {
-  //   return NextResponse.redirect(new URL("/", req.url));
-  // }
-  // if (!verifiedToken) {
-  //   if (req.nextUrl.pathname.startsWith("/api")) {
-  //     return new NextResponse(
-  //       JSON.stringify({ error: { message: "authentication required" } }),
-  //       { status: 401 }
-  //     );
-  //   }
-  //   return NextResponse.redirect(new URL("/auth/login", req.url));
-  // }
+  const token = req.headers.get("token");
+  if (!token) {
+    return new NextResponse(JSON.stringify({ message: "Token not found" }));
+  }
+  const verifiedToken = await verifyAuth(token);
+  if (!verifiedToken) {
+    return new NextResponse(JSON.stringify({ message: "Invalid Token." }));
+  }
+  return NextResponse.next();
 };
 export default middleware;
-// export const config = {
-//   matcher: ["/", "/auth/login"],
-// };
+
+export const config = {
+  matcher: ["/api/orders", "/api/orders/:slug*"],
+};
